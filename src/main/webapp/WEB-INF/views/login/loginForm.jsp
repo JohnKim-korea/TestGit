@@ -22,7 +22,7 @@
 	<form:password path="password"/>
 	<form:errors path="password"/>
 </p>
-<input type="submit" value="<spring:message code="login.btn"/>">
+<input type="submit" value="<spring:message code="login.btn"/>"> <!-- git test 입니다. -->
 </form:form>
 </body>
 </html>
