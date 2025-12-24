@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:tx="http://www.springframework.org/schema/tx"
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	https://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	
+	<mvc:annotation-driven/>
+	
+	<mvc:view-resolvers>
+		<mvc:jsp prefix="/WEB-INF/views/" suffix=".jsp"/>
+	</mvc:view-resolvers>
+	
+	<mvc:view-controller path="/main" view-name="main"/>
+	
+	<bean id="messageSource" 
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>message.label</value>
+			</list>
+		</property>	
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+	
+	<bean id="transactionManager" 
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+		
+	<!-- DBCP 빈 생성 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<!-- 데이터베이스 접속 설정 -->
+		<property name="driverClass" value="oracle.jdbc.OracleDriver"/>
+		<property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="user" value="system"/>
+		<property name="password" value="oracle"/>
+		
+		<!-- 커넥션풀 관리를 위한 설정 -->
+		<property name="maxPoolSize" value="100"/>
+		<property name="maxIdleTime" value="600"/>
+		<property name="idleConnectionTestPeriod" value="300"/>
+	</bean>
+	
+	<bean id="memberDao" class="examspring.MemberDao">
+		<constructor-arg name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<bean id="regSvc" class="examspring.MemberRegisterService">
+		<constructor-arg ref="memberDao"/>
+	</bean> 
+	
+	<bean id="authService" class="examspring.AuthService">
+		<property name="memberDao" ref="memberDao"/>
+	</bean>
+	<!-- property에서 이름을 생략할경우 spring이 알아서 이름을 ref 이름과 동일시하여 속성을 넣는다. -->
+	
+	<bean id="changePwdSvc" class="examspring.ChangePasswordService">
+		<constructor-arg ref="memberDao"/>
+	</bean>
+	<!-- <constructor-arg> 요소에서 name 속성을 생략하면 해당 매개변수의 이름은 자동으로 생성자의 매개변수의 이름으로 지정됩니다. 
+	따라서, <constructor-arg ref="memberDao"/>와 같이 작성하면 memberDao라는 이름을 가진 빈 객체가 해당 생성자의 매개변수로 전달됩니다. -->
+	
+	<mvc:interceptors>
+		
+		<mvc:interceptor>
+			<mvc:mapping path="/edit/**"/> <!-- RequestMapping 한 url설정에 대해서 동작한다.-->
+			<bean class = "interceptor.AuthCheckInterceptor"></bean>
+		</mvc:interceptor>
+		
+	</mvc:interceptors>
+	
+</beans>
+
+
+
+
+
