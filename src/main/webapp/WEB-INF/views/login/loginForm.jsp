@@ -20,7 +20,7 @@
 <p>
 	<spring:message code="password"/>
 	<form:password path="password"/>
-	<form:errors path="password"/>
+	<form:errors path="password"/><!-- 주석석 -->
 </p>
 <input type="submit" value="<spring:message code="login.btn"/>"> <!-- git test 입니다. -->
 </form:form>
