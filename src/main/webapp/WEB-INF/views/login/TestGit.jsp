@@ -14,6 +14,6 @@
 	<li>item3</li>
 	<li>item4</li>
 	<li>item5</li>
-</ul>
+</ul><!-- 주석 -->
 </body>
 </html>
