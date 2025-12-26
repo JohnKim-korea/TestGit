@@ -1,2 +1,0 @@
-git test
-test test test test 업데이
